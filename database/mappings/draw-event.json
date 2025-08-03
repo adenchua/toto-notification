@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "jackpot": {
+        "type": "integer"
+      },
+      "next_draw_datestring": {
+        "type": "keyword"
+      },
+      "crawl_date": {
+        "type": "date",
+        "format": "strict_date_time"
+      }
+    }
+  },
+  "aliases": {
+    "draw-event": {}
+  }
+}

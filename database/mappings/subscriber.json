@@ -1,0 +1,42 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    }
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "properties": {
+      "first_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "last_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "registered_date": {
+        "type": "date",
+        "format": "strict_date_time"
+      },
+      "username": {
+        "type": "keyword"
+      },
+      "jackpot_threshold": {
+        "type": "integer"
+      }
+    }
+  },
+  "aliases": {
+    "subscriber": {}
+  }
+}

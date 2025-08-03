@@ -1,0 +1,50 @@
+services:
+  opensearch-node: 
+    image: opensearchproject/opensearch:${OPENSEARCH_VERSION}
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node
+      - discovery.seed_hosts=opensearch-node
+      - cluster.initial_cluster_manager_nodes=opensearch-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m" # Set min and max JVM heap sizes to at least 50% of system RAM
+      - "OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_DATABASE_PASSWORD}" # Sets the demo admin user password when using demo configuration, required for OpenSearch 2.12 and later
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65536
+    ports:
+      - 9200:9200
+    volumes:
+      - ./database/opensearch-data:/usr/share/opensearch/data
+    networks:
+      - toto-network
+    restart: "always"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -k -u admin:${OPENSEARCH_DATABASE_PASSWORD} --silent --fail https://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:${OPENSEARCH_VERSION}
+    ports:
+      - ${OPENSEARCH_DASHBOARDS_PORT}:5601
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch-node:9200"]'
+    networks:
+      - toto-network
+    depends_on:
+      opensearch-node:
+        condition: service_healthy
+    restart: "always"
+
+volumes:
+  opensearch-data:
+
+networks:
+  toto-network:
