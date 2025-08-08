@@ -16,8 +16,8 @@ services:
       nofile:
         soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
         hard: 65536
-    ports:
-      - 9200:9200
+    expose: 
+      - 9200
     volumes:
       - ./database/opensearch-data:/usr/share/opensearch/data
     networks:
@@ -42,6 +42,34 @@ services:
       opensearch-node:
         condition: service_healthy
     restart: "always"
+
+  telegram-bot:
+    build:
+      dockerfile: ./telegram_bot/Dockerfile
+      context: ./
+    env_file:
+      - ./.env
+    image: telegram-bot:1.0.0
+    networks:
+      - toto-network
+    depends_on:
+      opensearch-node:
+        condition: service_healthy
+    restart: "always"    
+
+  scripts:
+    build:
+      dockerfile: ./toto_service/Dockerfile
+      context: ./
+    env_file:
+      - ./.env
+    image: scripts:1.0.0
+    networks:
+      - toto-network
+    depends_on:
+      opensearch-node:
+        condition: service_healthy
+    restart: "always"    
 
 volumes:
   opensearch-data:

@@ -33,6 +33,9 @@
       },
       "jackpot_threshold": {
         "type": "integer"
+      },
+      "last_notified_event": {
+        "type": "keyword"
       }
     }
   },
