@@ -63,7 +63,7 @@ async def jackpot_threshold_input(
             user_id, new_jackpot_threshold
         )
         await query.edit_message_text(
-            f"Jackpot threshold updated to {format(new_jackpot_threshold)}"
+            f"Jackpot threshold updated to ${format(new_jackpot_threshold, ",")}"
         )
     except Exception as error:
         logger.exception(error)
