@@ -24,7 +24,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     keyboard = [
         [InlineKeyboardButton("$2,000,000", callback_data="2000000")],
         [InlineKeyboardButton("$4,000,000", callback_data="4000000")],
-        [InlineKeyboardButton("$5,000,000", callback_data="5000000")],
+        [InlineKeyboardButton("$6,000,000", callback_data="6000000")],
         [InlineKeyboardButton("$8,000,000", callback_data="8000000")],
         [InlineKeyboardButton("$10,000,000", callback_data="10000000")],
     ]

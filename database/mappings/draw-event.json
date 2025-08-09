@@ -17,6 +17,10 @@
       "crawl_date": {
         "type": "date",
         "format": "strict_date_time"
+      },
+      "draw_date": {
+        "type": "date",
+        "format": "strict_date_time"
       }
     }
   },

@@ -1,5 +1,7 @@
 from asyncio import sleep
 import sys
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from toto_service.models.event_model import EventModel
 from toto_service.models.subscriber_model import SubscriberModel
@@ -34,6 +36,16 @@ class SubscriberNotificationJob:
 
                 jackpot: int = event.get("jackpot", None)
                 next_draw_datestring: str = event.get("next_draw_datestring", None)
+                next_draw_iso_date: str = event.get("draw_date", None)
+
+                # for comparison against the current datetime
+                sgt_time_zone = ZoneInfo("Asia/Singapore")
+                next_draw_date = (
+                    datetime.fromisoformat(next_draw_iso_date)
+                    if next_draw_iso_date is not None
+                    else None
+                )
+                now = datetime.now(sgt_time_zone)
 
                 if jackpot is None or next_draw_datestring is None:
                     raise Exception("There is something wrong with the latest event")
@@ -45,18 +57,28 @@ class SubscriberNotificationJob:
                     subscriber_last_notified_event: str = subscriber.get(
                         "last_notified_event", None
                     )
+
                     subscriber_id: str = subscriber.get("_id", None)
 
                     is_jackpot_above_threshold: bool = (
                         jackpot >= subscriber_jackpot_threshold
                     )
+
                     is_new_event: bool = (
                         subscriber_last_notified_event != next_draw_datestring
                     )
 
-                    # new event with jackpot above set threshold, send message
-                    # and update subscriber event last_notified_event
-                    if is_jackpot_above_threshold and is_new_event:
+                    is_upcoming_event: bool = (
+                        next_draw_date is not None and next_draw_date > now
+                    )
+
+                    # new event, jackpot above set threshold, upcoming event:
+                    # send message and update subscriber event last_notified_event
+                    if (
+                        is_jackpot_above_threshold
+                        and is_new_event
+                        and is_upcoming_event
+                    ):
                         subscriber_model.update_subscriber_event(
                             subscriber_id=subscriber_id, draw_event=next_draw_datestring
                         )
